@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Абаканские Мангалы</string>
+    <string name="product_price">Цена</string>
+    <string name="product_name">Название</string>
+    <string name="category">Категория</string>
+    <string name="product_description">Описание товара</string>
+    <string name="add_product">Добавить товар</string>
+    <string name="select_image">Выбрать изображение</string>
+    <string name="admin_panel">Панель админа</string>
+    <string name="back">Назад</string>
+    <string name="name">Название</string>
+    <string name="price">Цена</string>
+    <string name="delete">Удалить</string>
+</resources>
