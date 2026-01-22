@@ -1,6 +1,5 @@
 package com.vadim.manganal.data.retrofit
 
-import com.vadim.manganal.BuildConfig
 import okhttp3.MultipartBody
 import retrofit2.http.Headers
 import retrofit2.http.Multipart

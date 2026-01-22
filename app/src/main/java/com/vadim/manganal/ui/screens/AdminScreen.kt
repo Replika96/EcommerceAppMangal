@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -57,12 +55,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vadim.manganal.domain.entity.Product
 import com.vadim.manganal.R
+import com.vadim.manganal.domain.entity.ProductState
 import com.vadim.manganal.ui.theme.DarkBrown
-import com.vadim.manganal.ui.theme.LightBeige
 import com.vadim.manganal.ui.theme.MutedTerracotta
-import com.vadim.manganal.ui.theme.ViewModel.MangalViewModel
+import com.vadim.manganal.ui.ViewModel.MangalViewModel
 import com.vadim.manganal.ui.theme.ViewModel.ImageViewModel
-import com.vadim.manganal.ui.theme.SoftOrange
 import com.vadim.manganal.utils.UriUtils
 
 
@@ -73,143 +70,153 @@ fun AdminScreen(
     imageViewModel: ImageViewModel = hiltViewModel(),
     onBack: () -> Unit
 ) {
-    val products by mangalViewModel.products.collectAsState()
-    val uploadStatus by imageViewModel.uploadStatus.observeAsState()
-    val uploadedImageUrl by imageViewModel.uploadedImageUrl.observeAsState()
-
-    var productName by remember { mutableStateOf("") }
-    var productPrice by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("") }
-    var productDescription by remember { mutableStateOf("") }
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-
-    val context = LocalContext.current
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            uri?.let {
-                selectedImageUri = it
-                val file = UriUtils.getFileFromUri(context, it)
-                imageViewModel.uploadImage(file)
-            }
+    val state by mangalViewModel.state.collectAsState()
+    when(state){
+        is ProductState.Loading ->{
+            Text("Загрузка")
         }
-    )
+        is ProductState.Error ->{
+            Text("Ошибка: ${(state as ProductState.Error).message}")
+        }
+        is ProductState.Success ->{
+            val products = (state as ProductState.Success).products
+            val uploadStatus by imageViewModel.uploadStatus.observeAsState()
+            val uploadedImageUrl by imageViewModel.uploadedImageUrl.observeAsState()
 
-    val isFormValid = productName.isNotBlank() && productPrice.toIntOrNull() != null && category.isNotBlank()
+            var productName by remember { mutableStateOf("") }
+            var productPrice by remember { mutableStateOf("") }
+            var category by remember { mutableStateOf("") }
+            var productDescription by remember { mutableStateOf("") }
+            var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
+            val context = LocalContext.current
 
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-        ) {
-            // заголовок
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onBack, modifier = Modifier.padding(10.dp)) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_icons_arrow_left),
-                        contentDescription = stringResource(R.string.back),
-                        modifier = Modifier.size(50.dp)
-                    )
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetContent(),
+                onResult = { uri ->
+                    uri?.let {
+                        selectedImageUri = it
+                        val file = UriUtils.getFileFromUri(context, it)
+                        imageViewModel.uploadImage(file)
+                    }
                 }
-                Text(
-                    text = stringResource(R.string.admin_panel),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-
-            ProductForm(
-                productName = productName,
-                onProductNameChange = { productName = it },
-                productPrice = productPrice,
-                onProductPriceChange = { productPrice = it },
-                category = category,
-                onCategoryChange = { category = it },
-                productDescription = productDescription,
-                onProductDescriptionChange = { productDescription = it }
             )
 
-            uploadStatus?.let { status ->
-                if (status.contains("Ошибка")) {
-                    Text(
-                        text = status,
-                        color = Color.Red,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                } else {
-                    CircularProgressIndicator(modifier = Modifier.padding(vertical = 8.dp))
-                }
-            }
+            val isFormValid = productName.isNotBlank() && productPrice.toIntOrNull() != null && category.isNotBlank()
 
-            Button(
-                onClick = { launcher.launch("image/*") },
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MutedTerracotta,
-                    contentColor = Color.White
-                )
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
-                Text(stringResource(R.string.select_image))
-            }
 
-            Button(
-                onClick = {
-                    uploadedImageUrl?.let { imageUrl ->
-                        mangalViewModel.addProduct(
-                            Product(
-                                id = "",
-                                name = productName,
-                                price = productPrice.toIntOrNull() ?: 0,
-                                category = category,
-                                description = productDescription,
-                                imageUrl = imageUrl
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    // заголовок
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = onBack, modifier = Modifier.padding(10.dp)) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_icons_arrow_left),
+                                contentDescription = stringResource(R.string.back),
+                                modifier = Modifier.size(50.dp)
                             )
+                        }
+                        Text(
+                            text = stringResource(R.string.admin_panel),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 16.dp)
                         )
-                        productName = ""
-                        productPrice = ""
-                        category = ""
-                        productDescription = ""
-                        selectedImageUri = null
-                        imageViewModel.resetUploadStatus()
-                        imageViewModel.resetUploadedImageUrl()
                     }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MutedTerracotta,
-                    contentColor = Color.White
-                ),
-                enabled = uploadedImageUrl != null && isFormValid
-            ) {
-                Text(stringResource(R.string.add_product))
+
+                    ProductForm(
+                        productName = productName,
+                        onProductNameChange = { productName = it },
+                        productPrice = productPrice,
+                        onProductPriceChange = { productPrice = it },
+                        category = category,
+                        onCategoryChange = { category = it },
+                        productDescription = productDescription,
+                        onProductDescriptionChange = { productDescription = it }
+                    )
+
+                    uploadStatus?.let { status ->
+                        if (status.contains("Ошибка")) {
+                            Text(
+                                text = status,
+                                color = Color.Red,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        } else {
+                            CircularProgressIndicator(modifier = Modifier.padding(vertical = 8.dp))
+                        }
+                    }
+
+                    Button(
+                        onClick = { launcher.launch("image/*") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MutedTerracotta,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(stringResource(R.string.select_image))
+                    }
+
+                    Button(
+                        onClick = {
+                            uploadedImageUrl?.let { imageUrl ->
+                                mangalViewModel.addProduct(
+                                    Product(
+                                        id = "",
+                                        name = productName,
+                                        price = productPrice.toIntOrNull() ?: 0,
+                                        category = category,
+                                        description = productDescription,
+                                        imageUrl = imageUrl
+                                    )
+                                )
+                                productName = ""
+                                productPrice = ""
+                                category = ""
+                                productDescription = ""
+                                selectedImageUri = null
+                                imageViewModel.resetUploadStatus()
+                                imageViewModel.resetUploadedImageUrl()
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MutedTerracotta,
+                            contentColor = Color.White
+                        ),
+                        enabled = uploadedImageUrl != null && isFormValid
+                    ) {
+                        Text(stringResource(R.string.add_product))
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+
+                ProductList(
+                    products = products,
+                    onDelete = { mangalViewModel.deleteProduct(it) },
+                    modifier = Modifier
+                        .weight(0.5f)
+                )
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-        ProductList(
-            products = products,
-            onDelete = { mangalViewModel.deleteProduct(it) },
-            modifier = Modifier
-                .weight(0.5f)
-        )
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

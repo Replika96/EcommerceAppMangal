@@ -5,6 +5,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.vadim.manganal.domain.Repository.MangalRepository
 import com.vadim.manganal.domain.entity.Product
 import jakarta.inject.Inject
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 
@@ -12,16 +15,26 @@ class MangalRepositoryImpl @Inject constructor(
     db: FirebaseFirestore
 ): MangalRepository{
     override val productsCollection = db.collection("products")
+    override fun observeProducts(): Flow<List<Product>> = callbackFlow {
+        val listener = productsCollection
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
 
-    override suspend fun getProducts(): List<Product>{
-        return try {
-            val snapshot = productsCollection.get().await()
-            snapshot.toObjects(Product::class.java)
-        } catch (e: Exception){
-            Log.e("ProductRepository", "Ошибка загрузки продуктов",e)
-            emptyList()
+                val products = snapshot
+                    ?.toObjects(Product::class.java)
+                    ?: emptyList()
+
+                trySend(products)
+            }
+
+        awaitClose {
+            listener.remove()
         }
     }
+
     override suspend fun getProductById(productId: String): Product? {
         return try {
             val document = productsCollection.document(productId).get().await()
