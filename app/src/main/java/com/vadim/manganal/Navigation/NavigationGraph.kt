@@ -19,7 +19,7 @@ import com.vadim.manganal.ui.screens.EditAddressScreen
 import com.vadim.manganal.ui.screens.EditPersonalInfoScreen
 import com.vadim.manganal.ui.screens.LoginScreen
 import com.vadim.manganal.ui.theme.ViewModel.CartViewModel
-import com.vadim.manganal.ui.theme.ViewModel.MangalViewModel
+import com.vadim.manganal.ui.ViewModel.MangalViewModel
 import com.vadim.manganal.ui.theme.ViewModel.ProductDetailsViewModel
 import com.vadim.manganal.ui.theme.screens.AdminScreen
 import com.vadim.manganal.ui.theme.screens.CartScreen

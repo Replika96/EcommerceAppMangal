@@ -41,6 +41,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -51,7 +52,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -77,12 +77,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.vadim.manganal.R
 import com.vadim.manganal.domain.entity.Product
+import com.vadim.manganal.domain.entity.ProductState
 import com.vadim.manganal.domain.entity.SortOption
 import com.vadim.manganal.ui.ViewModel.FavoritesViewModel
 import kotlinx.coroutines.flow.debounce
@@ -94,7 +96,7 @@ import com.vadim.manganal.ui.theme.MutedTerracotta
 import com.vadim.manganal.ui.theme.SageGreen
 import com.vadim.manganal.ui.theme.SoftOrange
 import com.vadim.manganal.ui.theme.ViewModel.CartViewModel
-import com.vadim.manganal.ui.theme.ViewModel.MangalViewModel
+import com.vadim.manganal.ui.ViewModel.MangalViewModel
 import kotlinx.coroutines.FlowPreview
 
 @Composable
@@ -104,7 +106,7 @@ fun HomeScreen(
     onDetailsClick: (String) -> Unit,
     favoritesViewModel: FavoritesViewModel
 ) {
-    val products by mangalViewModel.products.collectAsState()
+    val state by mangalViewModel.state.collectAsState()
     val favorites by favoritesViewModel.favorites.collectAsState()
     var selectedCategory by remember { mutableStateOf("Все") }
     var searchQuery by remember { mutableStateOf("") }
@@ -118,63 +120,73 @@ fun HomeScreen(
         )
     }
 
-    LaunchedEffect(Unit) {
-        mangalViewModel.startListening()
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            mangalViewModel.stopListening()
+    when(state) {
+        is ProductState.Loading -> {
+            CircularProgressIndicator()
+            Text("Загрузка...", textAlign = TextAlign.Center ,modifier = Modifier.fillMaxSize())
         }
-    }
+        is ProductState.Error -> {
+            Text(textAlign = TextAlign.Center ,modifier = Modifier.fillMaxSize(), text = "Ошибка: ${(state as ProductState.Error).message}")
+        }
+        is ProductState.Success -> {
+            val products = (state as ProductState.Success).products
+            val sortedFilteredProducts by remember(
+                products,
+                selectedCategory,
+                sortOption,
+                searchQuery
+            ) {
+                derivedStateOf {
+                    val filtered = if (selectedCategory == "Все") products
+                    else products.filter { it.category == selectedCategory }
 
-    val sortedFilteredProducts by remember(products, selectedCategory, sortOption, searchQuery) {
-        derivedStateOf {
-            val filtered = if (selectedCategory == "Все") products
-            else products.filter { it.category == selectedCategory }
+                    val searched = if (searchQuery.isBlank()) filtered
+                    else filtered.filter { product ->
+                        product.name.contains(searchQuery, ignoreCase = true) ||
+                                product.description?.contains(
+                                    searchQuery,
+                                    ignoreCase = true
+                                ) ?: false ||
+                                product.category.contains(searchQuery, ignoreCase = true)
+                    }
 
-            val searched = if (searchQuery.isBlank()) filtered
-            else filtered.filter { product ->
-                product.name.contains(searchQuery, ignoreCase = true) ||
-                        product.description?.contains(searchQuery, ignoreCase = true) ?: false ||
-                        product.category.contains(searchQuery, ignoreCase = true)
+                    when (sortOption.field) {
+                        SortField.PRICE -> if (sortOption.order == SortOrder.ASCENDING)
+                            searched.sortedByDescending { it.price }
+                        else
+                            searched.sortedBy { it.price }
+
+                        SortField.NAME -> if (sortOption.order == SortOrder.ASCENDING)
+                            searched.sortedBy { it.name }
+                        else
+                            searched.sortedByDescending { it.name }
+                    }
+                }
             }
-
-            when (sortOption.field) {
-                SortField.PRICE -> if (sortOption.order == SortOrder.ASCENDING)
-                    searched.sortedByDescending { it.price }
-                else
-                    searched.sortedBy { it.price }
-
-                SortField.NAME -> if (sortOption.order == SortOrder.ASCENDING)
-                    searched.sortedBy { it.name }
-                else
-                    searched.sortedByDescending { it.name }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(LightBeige)
+            ) {
+                SearchBar(
+                    onSearch = { query -> searchQuery = query }
+                )
+                CategoriesDropdown(
+                    categories = categories,
+                    selectedCategory = selectedCategory,
+                    onCategoryClick = { selectedCategory = it }
+                )
+                SortBar(currentSort = sortOption, onSortChange = { sortOption = it })
+                ContentGrid(
+                    products = sortedFilteredProducts,
+                    onDetailsClick = onDetailsClick,
+                    cartViewModel = cartViewModel,
+                    favoritesViewModel = favoritesViewModel,
+                    favorites = favorites
+                )
             }
         }
-    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(LightBeige)
-    ) {
-        SearchBar(
-            onSearch = { query -> searchQuery = query }
-        )
-        CategoriesDropdown(
-            categories = categories,
-            selectedCategory = selectedCategory,
-            onCategoryClick = { selectedCategory = it }
-        )
-        SortBar(currentSort = sortOption, onSortChange = { sortOption = it })
-        ContentGrid(
-            products = sortedFilteredProducts,
-            onDetailsClick = onDetailsClick,
-            cartViewModel = cartViewModel,
-            favoritesViewModel = favoritesViewModel,
-            favorites = favorites
-        )
     }
 }
 

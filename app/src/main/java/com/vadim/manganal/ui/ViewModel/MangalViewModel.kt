@@ -1,83 +1,56 @@
-package com.vadim.manganal.ui.theme.ViewModel
+package com.vadim.manganal.ui.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
 import com.vadim.manganal.data.repository.MangalRepositoryImpl
-import com.vadim.manganal.domain.Repository.FavoritesRepository
 import com.vadim.manganal.domain.entity.Product
-import com.vadim.manganal.domain.Repository.MangalRepository
+import com.vadim.manganal.domain.entity.ProductState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MangalViewModel @Inject constructor(
-    private val repository: MangalRepositoryImpl,
-    private val firestore: FirebaseFirestore,
-    private val favoritesRepository: FavoritesRepository,
+    private val repository: MangalRepositoryImpl
 ) : ViewModel() {
 
-    private val _products = MutableStateFlow<List<Product>>(emptyList()) //"внутренний" источник данных
-    val products: StateFlow<List<Product>> = _products
-    private val _favorites = MutableStateFlow<Set<String>>(emptySet())
-    val favorites: StateFlow<Set<String>> = _favorites
+     val state: StateFlow<ProductState> =
+        repository.observeProducts()
+            .map<List<Product>, ProductState>{ products ->
+                ProductState.Success(products)
+            }
+            .onStart { emit(ProductState.Loading) }
+            .catch { e ->
+                emit(ProductState.Error(e.message?: "Unknowm error"))
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = ProductState.Loading
+            )
 
-    init {
-        loadProducts()
-
-    }
-
-    private fun loadProducts() {
-        viewModelScope.launch {
-            _products.value = repository.getProducts()
-        }
-    }
 
     fun addProduct(product: Product) {
         viewModelScope.launch {
             repository.addProduct(product)
-            loadProducts()
         }
     }
 
     fun editProduct(product: Product, documentId: String) {
         viewModelScope.launch {
             repository.updateProduct(product, documentId)
-            loadProducts()
         }
     }
 
     fun deleteProduct(productId: String) {
         viewModelScope.launch {
             repository.deleteProduct(productId)
-            loadProducts()
         }
-    }
-
-
-    private var snapshotListener: ListenerRegistration? = null
-
-    fun startListening() {
-        // подписываемся на изменения коллекции "products" в файрсторе
-        snapshotListener = firestore.collection("products")
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    Log.e("Firestore", "Listen failed", error)
-                    return@addSnapshotListener
-                }
-
-                val items = snapshot?.toObjects(Product::class.java) ?: emptyList()
-                _products.value = items
-            }
-    }
-
-    fun stopListening() {
-        snapshotListener?.remove()
     }
 
 }

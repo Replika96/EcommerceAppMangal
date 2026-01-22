@@ -54,12 +54,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.vadim.manganal.R
 import com.vadim.manganal.domain.entity.Product
+import com.vadim.manganal.domain.entity.ProductState
 import com.vadim.manganal.domain.entity.SortOption
 import com.vadim.manganal.ui.ViewModel.FavoritesViewModel
 import com.vadim.manganal.ui.theme.DarkBrown
 import com.vadim.manganal.ui.theme.LightBeige
 import com.vadim.manganal.ui.theme.MutedTerracotta
-import com.vadim.manganal.ui.theme.ViewModel.MangalViewModel
+import com.vadim.manganal.ui.ViewModel.MangalViewModel
 
 val  fontFamily = FontFamily(Font(R.font.gilroyblack))
 
@@ -70,99 +71,127 @@ fun FavoritesScreen(
     onDetailsClick: (String) -> Unit,
     onCartClick: () -> Unit = {}
 ) {
-    val products by mangalViewModel.products.collectAsState()
-    val favorites by favoritesViewModel.favorites.collectAsState()
-    var searchQuery by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf("Все") }
-    var sortOption by remember { mutableStateOf(SortOption(SortField.PRICE, SortOrder.ASCENDING)) }
-
-    val categories = remember {
-        listOf(
-            "Все", "Мангальные зоны", "Костровые чаши", "Флюгера",
-            "Адресные таблички", "Мангалы в виде животных", "Дымники",
-            "Костровые Сферы", "Дровницы", "Чан банный", "Сотовый стол для лазерного станка"
-        )
-    }
-
-    // фильтруем товары, чтобы отображать только избранные
-    val favoriteProducts by remember(products, favorites) {
-        derivedStateOf {
-            products.filter { it.id in favorites }
+    val state by mangalViewModel.state.collectAsState()
+    when (state) {
+        is ProductState.Loading -> {
+            Text("Загрузка...")
         }
-    }
 
-    // сортировка и фильтрация с учетом поиска
-    val sortedFilteredProducts by remember(favoriteProducts, selectedCategory, sortOption, searchQuery) {
-        derivedStateOf {
-            // фильтрация по категории
-            val filtered = if (selectedCategory == "Все") favoriteProducts
-            else favoriteProducts.filter { it.category == selectedCategory }
-
-            // фильтрация по поисковому запросу
-            val searched = if (searchQuery.isBlank()) filtered
-            else filtered.filter { product ->
-                product.name.contains(searchQuery, ignoreCase = true) ||
-                        product.description?.contains(searchQuery, ignoreCase = true) ?: false ||
-                        product.category.contains(searchQuery, ignoreCase = true)
-            }
-
-            // сортировка
-            when (sortOption.field) {
-                SortField.PRICE -> if (sortOption.order == SortOrder.ASCENDING)
-                    searched.sortedBy { it.price }
-                else
-                    searched.sortedByDescending { it.price }
-
-                SortField.NAME -> if (sortOption.order == SortOrder.ASCENDING)
-                    searched.sortedBy { it.name }
-                else
-                    searched.sortedByDescending { it.name }
-            }
+        is ProductState.Error -> {
+            Text("Ошибка: ${(state as ProductState.Error).message}")
         }
-    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(LightBeige)
-    ) {
-
-        SearchBar(
-            onSearch = { query -> searchQuery = query }
-        )
-
-        CategoriesDropdown(
-            categories = categories,
-            selectedCategory = selectedCategory,
-            onCategoryClick = { selectedCategory = it }
-        )
-
-        SortBar(
-            currentSort = sortOption,
-            onSortChange = { sortOption = it }
-        )
-
-        if (sortedFilteredProducts.isEmpty()) {
-
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = if (favorites.isEmpty()) "У вас пока нет избранных товаров"
-                    else "Ничего не найдено по вашему запросу",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = DarkBrown,
-                    fontFamily = fontFamily
+        is ProductState.Success -> {
+            val products = (state as ProductState.Success).products
+            val favorites by favoritesViewModel.favorites.collectAsState()
+            var searchQuery by remember { mutableStateOf("") }
+            var selectedCategory by remember { mutableStateOf("Все") }
+            var sortOption by remember {
+                mutableStateOf(
+                    SortOption(
+                        SortField.PRICE,
+                        SortOrder.ASCENDING
+                    )
                 )
             }
-        } else {
-            ContentGrid(
-                products = sortedFilteredProducts,
-                onDetailsClick = onDetailsClick,
-                favoritesViewModel = favoritesViewModel,
-                favorites = favorites
-            )
+
+            val categories = remember {
+                listOf(
+                    "Все", "Мангальные зоны", "Костровые чаши", "Флюгера",
+                    "Адресные таблички", "Мангалы в виде животных", "Дымники",
+                    "Костровые Сферы", "Дровницы", "Чан банный", "Сотовый стол для лазерного станка"
+                )
+            }
+
+            // фильтруем товары, чтобы отображать только избранные
+            val favoriteProducts by remember(products, favorites) {
+                derivedStateOf {
+                    products.filter { it.id in favorites }
+                }
+            }
+
+            // сортировка и фильтрация с учетом поиска
+            val sortedFilteredProducts by remember(
+                favoriteProducts,
+                selectedCategory,
+                sortOption,
+                searchQuery
+            ) {
+                derivedStateOf {
+                    // фильтрация по категории
+                    val filtered = if (selectedCategory == "Все") favoriteProducts
+                    else favoriteProducts.filter { it.category == selectedCategory }
+
+                    // фильтрация по поисковому запросу
+                    val searched = if (searchQuery.isBlank()) filtered
+                    else filtered.filter { product ->
+                        product.name.contains(searchQuery, ignoreCase = true) ||
+                                product.description?.contains(
+                                    searchQuery,
+                                    ignoreCase = true
+                                ) ?: false ||
+                                product.category.contains(searchQuery, ignoreCase = true)
+                    }
+
+                    // сортировка
+                    when (sortOption.field) {
+                        SortField.PRICE -> if (sortOption.order == SortOrder.ASCENDING)
+                            searched.sortedBy { it.price }
+                        else
+                            searched.sortedByDescending { it.price }
+
+                        SortField.NAME -> if (sortOption.order == SortOrder.ASCENDING)
+                            searched.sortedBy { it.name }
+                        else
+                            searched.sortedByDescending { it.name }
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(LightBeige)
+            ) {
+
+                SearchBar(
+                    onSearch = { query -> searchQuery = query }
+                )
+
+                CategoriesDropdown(
+                    categories = categories,
+                    selectedCategory = selectedCategory,
+                    onCategoryClick = { selectedCategory = it }
+                )
+
+                SortBar(
+                    currentSort = sortOption,
+                    onSortChange = { sortOption = it }
+                )
+
+                if (sortedFilteredProducts.isEmpty()) {
+
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (favorites.isEmpty()) "У вас пока нет избранных товаров"
+                            else "Ничего не найдено по вашему запросу",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = DarkBrown,
+                            fontFamily = fontFamily
+                        )
+                    }
+                } else {
+                    ContentGrid(
+                        products = sortedFilteredProducts,
+                        onDetailsClick = onDetailsClick,
+                        favoritesViewModel = favoritesViewModel,
+                        favorites = favorites
+                    )
+                }
+            }
         }
     }
 }
