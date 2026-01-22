@@ -1,4 +1,4 @@
-package com.vadim.manganal.ui.ViewModel
+package com.vadim.manganal.ui.viewModel
 
 import androidx.annotation.OptIn
 import androidx.lifecycle.ViewModel
@@ -8,6 +8,7 @@ import androidx.media3.common.util.UnstableApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
+import com.vadim.manganal.data.repository.RegistrationRepositoryImpl
 import com.vadim.manganal.domain.Repository.AuthResult
 import com.vadim.manganal.domain.Repository.RegistrationRepository
 import com.vadim.manganal.domain.entity.User
@@ -43,7 +44,7 @@ sealed interface NavEvent {
 @HiltViewModel
 class RegistrationViewModel @OptIn(UnstableApi::class)
 @Inject constructor(
-    private val repo: RegistrationRepository,
+    private val repo: RegistrationRepositoryImpl,
     private val db: FirebaseFirestore,
     private val auth: FirebaseAuth
 ) : ViewModel() {

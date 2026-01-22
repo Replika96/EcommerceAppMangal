@@ -1,4 +1,4 @@
-package com.vadim.manganal.ui.theme.ViewModel
+package com.vadim.manganal.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.vadim.manganal.domain.entity.Product

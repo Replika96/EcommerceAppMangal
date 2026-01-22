@@ -86,7 +86,7 @@ import com.vadim.manganal.R
 import com.vadim.manganal.domain.entity.Product
 import com.vadim.manganal.domain.entity.ProductState
 import com.vadim.manganal.domain.entity.SortOption
-import com.vadim.manganal.ui.ViewModel.FavoritesViewModel
+import com.vadim.manganal.ui.viewModel.FavoritesViewModel
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import com.vadim.manganal.ui.theme.DarkBrown
@@ -95,8 +95,8 @@ import com.vadim.manganal.ui.theme.LightGray
 import com.vadim.manganal.ui.theme.MutedTerracotta
 import com.vadim.manganal.ui.theme.SageGreen
 import com.vadim.manganal.ui.theme.SoftOrange
-import com.vadim.manganal.ui.theme.ViewModel.CartViewModel
-import com.vadim.manganal.ui.ViewModel.MangalViewModel
+import com.vadim.manganal.ui.viewModel.CartViewModel
+import com.vadim.manganal.ui.viewModel.MangalViewModel
 import kotlinx.coroutines.FlowPreview
 
 @Composable

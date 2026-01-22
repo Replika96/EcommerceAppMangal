@@ -49,9 +49,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vadim.manganal.ui.ViewModel.AuthUiState
-import com.vadim.manganal.ui.ViewModel.NavEvent
-import com.vadim.manganal.ui.ViewModel.RegistrationViewModel
+import com.vadim.manganal.ui.viewModel.AuthUiState
+import com.vadim.manganal.ui.viewModel.NavEvent
+import com.vadim.manganal.ui.viewModel.RegistrationViewModel
 import com.vadim.manganal.ui.theme.DarkBrown
 import com.vadim.manganal.ui.theme.LightBeige
 import com.vadim.manganal.ui.theme.LightGray

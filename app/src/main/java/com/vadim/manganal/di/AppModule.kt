@@ -3,7 +3,7 @@ package com.vadim.manganal.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.vadim.manganal.domain.Repository.CartRepository
+import com.vadim.manganal.data.repository.RegistrationRepositoryImpl
 import com.vadim.manganal.data.retrofit.ImgurApiService
 import com.vadim.manganal.domain.Repository.RegistrationRepository
 import dagger.Module
@@ -42,5 +42,5 @@ object AppModule {
     @Singleton
     fun provideRegistrationRepository(
         auth: FirebaseAuth,
-    ): RegistrationRepository = RegistrationRepository(auth)
+    ): RegistrationRepository = RegistrationRepositoryImpl(auth)
 }

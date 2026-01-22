@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
@@ -36,8 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vadim.manganal.domain.entity.User
-import com.vadim.manganal.ui.ViewModel.RegistrationViewModel
+import com.vadim.manganal.ui.viewModel.RegistrationViewModel
 import com.vadim.manganal.ui.theme.DarkBrown
 import com.vadim.manganal.ui.theme.LightBeige
 import com.vadim.manganal.ui.theme.LightGray

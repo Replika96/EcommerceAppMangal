@@ -56,11 +56,11 @@ import com.vadim.manganal.R
 import com.vadim.manganal.domain.entity.Product
 import com.vadim.manganal.domain.entity.ProductState
 import com.vadim.manganal.domain.entity.SortOption
-import com.vadim.manganal.ui.ViewModel.FavoritesViewModel
+import com.vadim.manganal.ui.viewModel.FavoritesViewModel
 import com.vadim.manganal.ui.theme.DarkBrown
 import com.vadim.manganal.ui.theme.LightBeige
 import com.vadim.manganal.ui.theme.MutedTerracotta
-import com.vadim.manganal.ui.ViewModel.MangalViewModel
+import com.vadim.manganal.ui.viewModel.MangalViewModel
 
 val  fontFamily = FontFamily(Font(R.font.gilroyblack))
 

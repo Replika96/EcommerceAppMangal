@@ -1,8 +1,8 @@
-package com.vadim.manganal.ui.theme.ViewModel
+package com.vadim.manganal.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vadim.manganal.domain.Repository.CartRepository
+import com.vadim.manganal.data.repository.CartRepositoryImpl
 import com.vadim.manganal.domain.Repository.RegistrationRepository
 import com.vadim.manganal.domain.entity.Cart
 import com.vadim.manganal.domain.entity.CartItem
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartRepo: CartRepository,
+    private val cartRepo: CartRepositoryImpl,
     private val authRepo: RegistrationRepository
 ) : ViewModel() {
 

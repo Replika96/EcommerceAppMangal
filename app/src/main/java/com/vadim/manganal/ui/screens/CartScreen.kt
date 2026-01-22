@@ -51,7 +51,7 @@ import com.vadim.manganal.ui.theme.DarkBrown
 import com.vadim.manganal.ui.theme.LightBeige
 import com.vadim.manganal.ui.theme.MutedTerracotta
 import com.vadim.manganal.ui.theme.SoftOrange
-import com.vadim.manganal.ui.theme.ViewModel.CartViewModel
+import com.vadim.manganal.ui.viewModel.CartViewModel
 
 
 @Composable

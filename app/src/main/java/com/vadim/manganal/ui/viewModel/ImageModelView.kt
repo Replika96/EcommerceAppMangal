@@ -1,21 +1,20 @@
-package com.vadim.manganal.ui.theme.ViewModel
+package com.vadim.manganal.ui.viewModel
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.ViewModel
-import com.vadim.manganal.domain.Repository.ImageRepository
 import androidx.lifecycle.viewModelScope
+import com.vadim.manganal.data.repository.ImageRepositoryImpl
 import kotlinx.coroutines.launch
 import java.io.File
 
 
 @HiltViewModel
 class ImageViewModel @Inject constructor(
-    private val repository: ImageRepository
+    private val repository: ImageRepositoryImpl
 ) : ViewModel() {
 
     private val _uploadStatus = MutableLiveData<String?>()
