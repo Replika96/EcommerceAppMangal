@@ -53,13 +53,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vadim.manganal.R
-import com.vadim.manganal.ui.ViewModel.RegistrationViewModel
+import com.vadim.manganal.ui.viewModel.RegistrationViewModel
 import com.vadim.manganal.ui.theme.DarkBrown
 import com.vadim.manganal.ui.theme.LightBeige
 import com.vadim.manganal.ui.theme.LightGray
 import com.vadim.manganal.ui.theme.MutedTerracotta
 import com.vadim.manganal.ui.theme.SageGreen
-import com.vadim.manganal.ui.theme.ViewModel.CartViewModel
+import com.vadim.manganal.ui.viewModel.CartViewModel
 
 
 @Composable

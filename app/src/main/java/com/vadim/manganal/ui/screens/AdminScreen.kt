@@ -58,8 +58,8 @@ import com.vadim.manganal.R
 import com.vadim.manganal.domain.entity.ProductState
 import com.vadim.manganal.ui.theme.DarkBrown
 import com.vadim.manganal.ui.theme.MutedTerracotta
-import com.vadim.manganal.ui.ViewModel.MangalViewModel
-import com.vadim.manganal.ui.theme.ViewModel.ImageViewModel
+import com.vadim.manganal.ui.viewModel.MangalViewModel
+import com.vadim.manganal.ui.viewModel.ImageViewModel
 import com.vadim.manganal.utils.UriUtils
 
 

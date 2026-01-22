@@ -1,8 +1,8 @@
-package com.vadim.manganal.ui.ViewModel
+package com.vadim.manganal.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vadim.manganal.domain.Repository.FavoritesRepository
+import com.vadim.manganal.data.repository.FavoriteRepositoryImpl
 import com.vadim.manganal.domain.Repository.RegistrationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val repo: FavoritesRepository,
+    private val repo: FavoriteRepositoryImpl,
     private val authRepo: RegistrationRepository
 ) : ViewModel() {
 
@@ -37,8 +37,6 @@ class FavoritesViewModel @Inject constructor(
         val uid = authRepo.getCurrentUserId() ?: return
         viewModelScope.launch { block(uid) }
     }
-
-    fun add(productId: String) = launchWithUid { repo.addToFavorites(it, productId) }
 
     fun remove(productId: String) = launchWithUid { repo.removeFromFavorites(it, productId) }
 

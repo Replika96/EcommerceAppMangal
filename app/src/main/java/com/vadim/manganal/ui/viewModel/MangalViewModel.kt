@@ -1,4 +1,4 @@
-package com.vadim.manganal.ui.ViewModel
+package com.vadim.manganal.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -59,12 +59,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.vadim.manganal.R
-import com.vadim.manganal.ui.ViewModel.FavoritesViewModel
+import com.vadim.manganal.ui.viewModel.FavoritesViewModel
 import com.vadim.manganal.ui.theme.DarkBrown
 import com.vadim.manganal.ui.theme.LightBeige
 import com.vadim.manganal.ui.theme.SoftOrange
-import com.vadim.manganal.ui.theme.ViewModel.CartViewModel
-import com.vadim.manganal.ui.theme.ViewModel.ProductDetailsViewModel
+import com.vadim.manganal.ui.viewModel.CartViewModel
+import com.vadim.manganal.ui.viewModel.ProductDetailsViewModel
 
 
 @Composable
