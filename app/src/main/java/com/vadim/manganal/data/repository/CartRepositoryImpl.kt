@@ -3,7 +3,7 @@ package com.vadim.manganal.data.repository
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
-import com.vadim.manganal.domain.Repository.CartRepository
+import com.vadim.manganal.domain.repository.CartRepository
 import com.vadim.manganal.domain.entity.Cart
 import com.vadim.manganal.domain.entity.CartItem
 import com.vadim.manganal.domain.entity.Product

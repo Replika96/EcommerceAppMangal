@@ -2,9 +2,9 @@ package com.vadim.manganal.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.vadim.manganal.domain.Repository.MangalRepository
+import com.vadim.manganal.domain.repository.MangalRepository
 import com.vadim.manganal.domain.entity.Product
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
