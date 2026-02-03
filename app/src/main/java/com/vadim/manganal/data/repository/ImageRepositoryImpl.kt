@@ -3,7 +3,7 @@ package com.vadim.manganal.data.repository
 import android.util.Log
 import com.vadim.manganal.data.retrofit.ImgurApiService
 import com.vadim.manganal.data.retrofit.ImgurResponse
-import com.vadim.manganal.domain.Repository.ImageRepository
+import com.vadim.manganal.domain.repository.ImageRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody

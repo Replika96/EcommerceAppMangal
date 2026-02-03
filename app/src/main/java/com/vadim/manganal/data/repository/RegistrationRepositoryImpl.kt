@@ -4,8 +4,8 @@ import android.util.Log
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.vadim.manganal.domain.Repository.AuthResult
-import com.vadim.manganal.domain.Repository.RegistrationRepository
+import com.vadim.manganal.domain.repository.AuthResult
+import com.vadim.manganal.domain.repository.RegistrationRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow

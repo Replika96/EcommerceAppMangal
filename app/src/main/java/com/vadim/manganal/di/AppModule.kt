@@ -3,9 +3,11 @@ package com.vadim.manganal.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.vadim.manganal.data.repository.MangalRepositoryImpl
 import com.vadim.manganal.data.repository.RegistrationRepositoryImpl
 import com.vadim.manganal.data.retrofit.ImgurApiService
-import com.vadim.manganal.domain.Repository.RegistrationRepository
+import com.vadim.manganal.domain.repository.MangalRepository
+import com.vadim.manganal.domain.repository.RegistrationRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,4 +45,12 @@ object AppModule {
     fun provideRegistrationRepository(
         auth: FirebaseAuth,
     ): RegistrationRepository = RegistrationRepositoryImpl(auth)
+
+    @Provides
+    @Singleton
+    fun provideMangalRepository(
+        db: FirebaseFirestore
+    ): MangalRepository {
+        return MangalRepositoryImpl(db)
+    }
 }

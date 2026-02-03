@@ -24,11 +24,11 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.vadim.manganal.Navigation.NavigationGraph
-import com.vadim.manganal.Navigation.NavigationItem
-import com.vadim.manganal.ui.theme.DarkBrown
-import com.vadim.manganal.ui.theme.LightBeige
-import com.vadim.manganal.ui.theme.SoftOrange
+import com.vadim.manganal.navigation.NavigationGraph
+import com.vadim.manganal.navigation.NavigationItem
+import com.vadim.manganal.presentation.theme.DarkBrown
+import com.vadim.manganal.presentation.theme.LightBeige
+import com.vadim.manganal.presentation.theme.SoftOrange
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -1,6 +1,6 @@
 package com.vadim.manganal.data.repository
 
-import com.vadim.manganal.domain.Repository.FavoriteRepository
+import com.vadim.manganal.domain.repository.FavoriteRepository
 import javax.inject.Inject
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
