@@ -6,9 +6,10 @@ interface DeleteProductUseCase{
     suspend operator fun invoke(productId: String)
 }
 class DeleteProductUseCaseImpl(
-    private val repositoryImpl: MangalRepository
+    private val repository: MangalRepository
 ): DeleteProductUseCase {
     override suspend operator fun invoke(productId: String){
-        return repositoryImpl.deleteProduct(productId)
+        if (productId.isBlank()) return
+        return repository.deleteProduct(productId)
     }
 }

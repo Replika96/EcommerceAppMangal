@@ -11,6 +11,10 @@ class AddProductUseCaseImpl(
     private val repositoryImpl: MangalRepository
 ): AddProductUseCase {
     override suspend operator fun invoke(product: Product){
-        return repositoryImpl.addProduct(product)
+        val normalized = product.copy(
+            name = product.name.trim().replaceFirstChar { it.uppercase() },
+            description = product.description.trim()
+        )
+        return repositoryImpl.addProduct(normalized)
     }
 }
