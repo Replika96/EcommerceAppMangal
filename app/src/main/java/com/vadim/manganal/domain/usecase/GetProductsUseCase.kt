@@ -9,9 +9,10 @@ interface GetProductsUseCase {
 }
 
 class GetProductsUseCaseImpl(
-    private val repositoryImpl: MangalRepository
+    private val repository: MangalRepository
 ) : GetProductsUseCase {
     override fun invoke(): Flow<List<Product>> {
-        return repositoryImpl.observeProducts()
+        //нужно дополнить бизнес-логику
+        return repository.observeProducts()
     }
 }

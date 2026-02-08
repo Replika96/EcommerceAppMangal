@@ -15,6 +15,7 @@ class UpdateProductUseCaseImpl(
         product: Product,
         documentId: String
     ) {
+        //нужно дополнить бизнес-логику
         return repositoryImpl.updateProduct(product, documentId)
     }
 
